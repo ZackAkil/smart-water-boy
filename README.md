@@ -1,4 +1,4 @@
-# smart-water-boy-
+# smart-water-boy
 System for automatic tracking of water dispenser. 
 
 - Using and arduino to sense the water level of a large water container.
