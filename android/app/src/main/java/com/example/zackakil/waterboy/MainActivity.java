@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "water_boy")
-                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setSmallIcon(R.drawable.ic_stat_opacity)
                     .setContentTitle("Water Boy")
                     .setContentText("That's some high quality H2O!")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT).setContentIntent(intent);
