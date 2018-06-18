@@ -14,7 +14,9 @@ import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,14 +28,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        InitaliseBluetooth("HC-06");
+//        InitaliseBluetooth("HC-06");
+
+        ScheduledExecutorService scheduler =
+                Executors.newSingleThreadScheduledExecutor();
+
+        scheduler.scheduleAtFixedRate(
+                new Runnable() {
+                    public void run() {
+                        // call service
+                        Log.e("My App", "Hello again");
+                    }
+                }, 0, 1, TimeUnit.SECONDS);
     }
 
     @Override
     protected void onStop() {
         // call the superclass method first
         super.onStop();
-        closeBluetooth();
+//        closeBluetooth();
 
     }
 
@@ -67,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+
+
+    public int GetWaterLevel(){
+
+        return 0;
     }
 
 
