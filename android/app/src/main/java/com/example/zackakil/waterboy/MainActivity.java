@@ -1,5 +1,12 @@
 package com.example.zackakil.waterboy;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.bluetooth.BluetoothAdapter;
@@ -16,6 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 
@@ -23,29 +31,96 @@ public class MainActivity extends AppCompatActivity {
 
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); // "random" unique identifier
     private BluetoothSocket soc = null;
+    ScheduledFuture<?> scheduledFuture = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        InitaliseBluetooth("HC-06");
 
-        ScheduledExecutorService scheduler =
-                Executors.newSingleThreadScheduledExecutor();
+        String isOld = getIntent().getStringExtra("future");
 
-        scheduler.scheduleAtFixedRate(
-                new Runnable() {
-                    public void run() {
-                        // call service
-                        Log.e("My App", "Hello again");
-                    }
-                }, 0, 1, TimeUnit.SECONDS);
+        isOld = (isOld == null)? "yo" : isOld;
+
+        Log.e("My App", isOld);
+
+        if ( !isOld.equals("im old")){
+            Log.e("My App", "NOTIFICATIONS AHOI!");
+
+
+
+            createNotificationChannel();
+    //        InitaliseBluetooth("HC-06");
+
+
+            ScheduledExecutorService scheduler =
+                    Executors.newSingleThreadScheduledExecutor();
+
+            scheduledFuture = scheduler.scheduleAtFixedRate(
+                    new Runnable() {
+                        public void run() {
+                            // call service
+                            Log.e("My App", "Hello again");
+                        }
+                    }, 0, 1, TimeUnit.SECONDS);
+
+
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+
+            notificationIntent.putExtra("future", "im old");
+
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+            PendingIntent intent = PendingIntent.getActivity(this, 0,
+                    notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "water_boy")
+                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setContentTitle("Water Boy")
+                    .setContentText("That's some high quality H2O!")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT).setContentIntent(intent);
+
+
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            notificationManager.notify(42, mBuilder.build());
+
+        }
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("boobs", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     @Override
     protected void onStop() {
         // call the superclass method first
+        Log.e("My App", "GOODBYE");
         super.onStop();
+//        closeBluetooth();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        // call the superclass method first
+        Log.e("My App", "GOODBYE FOREVER");
+        super.onDestroy();
 //        closeBluetooth();
 
     }
