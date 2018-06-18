@@ -9,3 +9,5 @@ System for automatic tracking of water dispenser.
 ## Notes
 
 recurrent tasks - https://stackoverflow.com/questions/14376470/scheduling-recurring-task-in-android
+
+open app on notification - https://stackoverflow.com/questions/13716723/open-application-after-clicking-on-notification
