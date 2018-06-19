@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); // "random" unique identifier
     private BluetoothSocket soc = null;
     ScheduledFuture<?> scheduledFuture = null;
+    private int notificationThresh = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +61,16 @@ public class MainActivity extends AppCompatActivity {
                     new Runnable() {
                         public void run() {
                             // call service
+
+                            int waterLevel = getWaterLevel();
+
+                            if (waterLevel < notificationThresh){
+                                sendLowLevelNotification();
+                            }
+
                             Log.e("My App", "Hello again");
                         }
-                    }, 0, 1, TimeUnit.SECONDS);
+                    }, 0, 4, TimeUnit.SECONDS);
 
 
             Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -89,6 +97,16 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.notify(42, mBuilder.build());
 
         }
+    }
+
+    public int getWaterLevel(){
+
+//        send bluetooth to arduon
+        return 0;
+    }
+
+    public void sendLowLevelNotification(){
+        return;
     }
 
     private void createNotificationChannel() {
