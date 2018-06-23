@@ -12,9 +12,12 @@ import android.os.Bundle;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+
+import java.io.InputStream;
 import java.util.UUID;
 
 import android.util.Log;
+import android.view.View;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -69,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             Log.e("My App", "Hello again");
+//                            pingBluetooth();
+//
+//                            int level = pingReadBluetooth();
+//                            Log.e("My App", "Hello again " + String.valueOf(level));
+
                         }
                     }, 0, 4, TimeUnit.SECONDS);
 
@@ -108,6 +116,82 @@ public class MainActivity extends AppCompatActivity {
 //        send bluetooth to arduon
         return 0;
     }
+
+
+    private int pingReadBluetooth(){
+
+        if (this.soc.isConnected()){
+
+            try {
+                InputStream stream = this.soc.getInputStream();
+                byte output = 0;
+                while(stream.available() > 0) {
+                    output = stream.read();
+                }
+                return output;
+
+            }catch (IOException e){
+                Log.e("My App", "IO exception!",e);
+            }
+
+        }else{
+            Log.e("My App", "Not connected");
+        }
+        return 0;
+
+    }
+
+    public void btnPress(View v){
+//        Log.e("My App", "btn press");
+        pingBluetooth();
+    }
+
+    public void btnPress2(View v){
+//        Log.e("My App", "btn press");
+        int level = pingReadBluetooth();
+        Log.e("My App", "Hello again " + String.valueOf(level));
+    }
+
+    public void pingBluetooth(){
+
+        if (this.soc.isConnected()){
+
+            try {
+                OutputStream stream = this.soc.getOutputStream();
+
+                stream.write('0');
+                Log.e("My App", "Sent down bluetooth");
+
+            }catch (IOException e){
+                Log.e("My App", "IO exception!",e);
+            }
+
+        }else{
+            Log.e("My App", "Not connected");
+        }
+
+    }
+
+
+    public void sendDownBluetooth(byte[] bytes){
+
+        if (this.soc.isConnected()){
+
+            try {
+                OutputStream stream = this.soc.getOutputStream();
+
+                stream.write(bytes);
+
+            }catch (IOException e){
+                Log.e("My App", "IO exception!",e);
+            }
+
+        }else{
+            Log.e("My App", "Not connected");
+        }
+
+    }
+
 
     public void sendLowLevelNotification(){
         return;
