@@ -98,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.notify(42, mBuilder.build());
 
 
+            InitaliseBluetooth("HC-06");
+
         }
     }
 
