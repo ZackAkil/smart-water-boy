@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -124,9 +125,10 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 InputStream stream = this.soc.getInputStream();
-                byte output = 0;
+                int output = 0;
                 while(stream.available() > 0) {
                     output = stream.read();
+                    Log.e("My App", "read "+ String.valueOf(output));
                 }
                 return output;
 
@@ -148,8 +150,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnPress2(View v){
 //        Log.e("My App", "btn press");
-        int level = pingReadBluetooth();
-        Log.e("My App", "Hello again " + String.valueOf(level));
+        pingBluetooth();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int level = pingReadBluetooth();
+                Log.e("My App", "Hello again " + String.valueOf(level));
+            }
+        }, 100);
+
+
+
     }
 
     public void pingBluetooth(){
