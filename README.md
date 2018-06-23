@@ -13,3 +13,5 @@ recurrent tasks - https://stackoverflow.com/questions/14376470/scheduling-recurr
 open app on notification - https://stackoverflow.com/questions/13716723/open-application-after-clicking-on-notification
 
 bluetooth socket - https://developer.android.com/reference/android/bluetooth/BluetoothSocket
+
+andoird services? - https://stackoverflow.com/questions/38813888/how-can-i-run-bluetooth-connection-in-the-background-in-android
