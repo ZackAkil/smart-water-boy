@@ -18,6 +18,6 @@ void loop()
 
     sensor_value = analogRead(sensor);
     // add char catsing when sensor attached
-    Serial.print(map(sensor, 1, 1023, 1, 255));
+    Serial.print(map(sensor_value, 1, 1023, 1, 255));
   }
 }
