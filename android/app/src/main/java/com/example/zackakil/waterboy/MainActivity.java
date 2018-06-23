@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-            createNotificationChannel();
+            NotificationChannel channel =  createNotificationChannel();
     //        InitaliseBluetooth("HC-06");
 
 
@@ -89,12 +89,14 @@ public class MainActivity extends AppCompatActivity {
                     .setSmallIcon(R.drawable.ic_stat_opacity)
                     .setContentTitle("Water Boy")
                     .setContentText("That's some high quality H2O!")
+                    .setChannelId(channel.getId())
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT).setContentIntent(intent);
 
 
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             notificationManager.notify(42, mBuilder.build());
+
 
         }
     }
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         return;
     }
 
-    private void createNotificationChannel() {
+    private NotificationChannel createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -122,7 +124,9 @@ public class MainActivity extends AppCompatActivity {
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
+            return channel;
         }
+        return null;
     }
 
     @Override
