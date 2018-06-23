@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,10 +39,15 @@ public class MainActivity extends AppCompatActivity {
     ScheduledFuture<?> scheduledFuture = null;
     private int notificationThresh = 10;
 
+
+    private ImageView bottleImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        bottleImageView = findViewById(R.id.bottleImageView);
 
         String isOld = getIntent().getStringExtra("future");
 
@@ -157,6 +163,15 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 int level = pingReadBluetooth();
                 Log.e("My App", "Hello again " + String.valueOf(level));
+
+                if(level < 60){
+                    bottleImageView.setImageResource(R.drawable.low);
+                }else if (level < 160){
+                    bottleImageView.setImageResource(R.drawable.mid);
+                }else{
+                    bottleImageView.setImageResource(R.drawable.high);
+                }
+
             }
         }, 100);
 
