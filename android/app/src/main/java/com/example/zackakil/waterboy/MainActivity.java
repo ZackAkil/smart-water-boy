@@ -76,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
             ScheduledExecutorService scheduler =
                     Executors.newSingleThreadScheduledExecutor();
 
-            WaterMonitor wm = new WaterMonitor();
-            scheduledFuture = scheduler.scheduleAtFixedRate(wm, 0, 5, TimeUnit.SECONDS);
 
 
 
@@ -104,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             notificationManager.notify(42, mBuilder.build());
+
+
+            WaterMonitor wm = new WaterMonitor(notificationManager, mBuilder);
+            scheduledFuture = scheduler.scheduleAtFixedRate(wm, 0, 5, TimeUnit.SECONDS);
+
 
 
 //            bt = new BluetoothConnector("HC-06");
