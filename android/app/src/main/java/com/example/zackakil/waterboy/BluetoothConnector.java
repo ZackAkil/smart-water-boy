@@ -97,6 +97,7 @@ public class BluetoothConnector {
     }
 
     public int readInt(){
+
         if (this.soc.isConnected()){
 
             try {
@@ -115,6 +116,6 @@ public class BluetoothConnector {
         }else{
             Log.e("My App", "Not connected");
         }
-        return 0;
+        return 999;
     }
 }
