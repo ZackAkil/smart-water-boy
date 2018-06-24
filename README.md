@@ -15,3 +15,5 @@ open app on notification - https://stackoverflow.com/questions/13716723/open-app
 bluetooth socket - https://developer.android.com/reference/android/bluetooth/BluetoothSocket
 
 andoird services? - https://stackoverflow.com/questions/38813888/how-can-i-run-bluetooth-connection-in-the-background-in-android
+
+re: services, seems the prefered route for andoird Oreo+ are jobs - https://developer.android.com/guide/components/services
