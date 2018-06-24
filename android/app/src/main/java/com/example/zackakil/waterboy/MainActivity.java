@@ -3,9 +3,14 @@ package com.example.zackakil.waterboy;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +25,7 @@ import java.util.UUID;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,15 +38,18 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 
+
+
+
+
+
 public class MainActivity extends AppCompatActivity {
 
-    private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); // "random" unique identifier
-    private BluetoothSocket soc = null;
+
     ScheduledFuture<?> scheduledFuture = null;
     private int notificationThresh = 10;
-
-
     private ImageView bottleImageView;
+    private BluetoothConnector bt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,25 +76,9 @@ public class MainActivity extends AppCompatActivity {
             ScheduledExecutorService scheduler =
                     Executors.newSingleThreadScheduledExecutor();
 
-            scheduledFuture = scheduler.scheduleAtFixedRate(
-                    new Runnable() {
-                        public void run() {
-                            // call service
+            WaterMonitor wm = new WaterMonitor();
+            scheduledFuture = scheduler.scheduleAtFixedRate(wm, 0, 4, TimeUnit.SECONDS);
 
-                            int waterLevel = getWaterLevel();
-
-                            if (waterLevel < notificationThresh){
-                                sendLowLevelNotification();
-                            }
-
-                            Log.e("My App", "Hello again");
-//                            pingBluetooth();
-//
-//                            int level = pingReadBluetooth();
-//                            Log.e("My App", "Hello again " + String.valueOf(level));
-
-                        }
-                    }, 0, 4, TimeUnit.SECONDS);
 
 
             Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -113,55 +106,28 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.notify(42, mBuilder.build());
 
 
-            InitaliseBluetooth("HC-06");
+            bt = new BluetoothConnector("HC-06");
 
         }
     }
 
-    public int getWaterLevel(){
-
-//        send bluetooth to arduon
-        return 0;
-    }
 
 
-    private int pingReadBluetooth(){
-
-        if (this.soc.isConnected()){
-
-            try {
-                InputStream stream = this.soc.getInputStream();
-                int output = 0;
-                while(stream.available() > 0) {
-                    output = stream.read();
-                    Log.e("My App", "read "+ String.valueOf(output));
-                }
-                return output;
-
-            }catch (IOException e){
-                Log.e("My App", "IO exception!",e);
-            }
-
-        }else{
-            Log.e("My App", "Not connected");
-        }
-        return 0;
-
-    }
 
     public void btnPress(View v){
+//        notificationThresh++;
 //        Log.e("My App", "btn press");
-        pingBluetooth();
+        bt.ping();
     }
 
     public void btnPress2(View v){
 //        Log.e("My App", "btn press");
-        pingBluetooth();
+        bt.ping();
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                int level = pingReadBluetooth();
+                int level = bt.readInt();
                 Log.e("My App", "Hello again " + String.valueOf(level));
 
                 if(level < 60){
@@ -179,50 +145,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void pingBluetooth(){
-
-        if (this.soc.isConnected()){
-
-            try {
-                OutputStream stream = this.soc.getOutputStream();
-
-                stream.write('0');
-                Log.e("My App", "Sent down bluetooth");
-
-            }catch (IOException e){
-                Log.e("My App", "IO exception!",e);
-            }
-
-        }else{
-            Log.e("My App", "Not connected");
-        }
-
-    }
 
 
-    public void sendDownBluetooth(byte[] bytes){
-
-        if (this.soc.isConnected()){
-
-            try {
-                OutputStream stream = this.soc.getOutputStream();
-
-                stream.write(bytes);
-
-            }catch (IOException e){
-                Log.e("My App", "IO exception!",e);
-            }
-
-        }else{
-            Log.e("My App", "Not connected");
-        }
-
-    }
 
 
-    public void sendLowLevelNotification(){
-        return;
-    }
+
 
     private NotificationChannel createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
@@ -260,67 +187,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private  void InitaliseBluetooth(String btDeviceName){
-
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            // Device does not support Bluetooth
-            Log.e("My App", "Bluetooth not found");
-        }
-
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-
-        if (pairedDevices.size() > 0) {
-            // There are paired devices. Get the name and address of each paired device.
-            for (BluetoothDevice device : pairedDevices) {
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                Log.d("My App", deviceName);
-                Log.d("My App", deviceHardwareAddress);
-                if(device.getName().equals(btDeviceName)) {
-                    Log.e("My App", "Found device");
-                    try{
-                        soc = createBluetoothSocket(device);
-                        soc.connect();
-                    } catch (IOException e) {
-                        Log.e("My App", "Socket creation failed");
-                    }
-
-                }
-            }
-
-        }
-    }
 
 
-
-    public int GetWaterLevel(){
-
-        return 0;
-    }
-
-
-    public BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-        try {
-            final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", UUID.class);
-            return (BluetoothSocket) m.invoke(device, BTMODULEUUID);
-        } catch (Exception e) {
-            Log.e("My App", "Could not create Insecure RFComm Connection", e);
-        }
-        return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
-    }
-
-
-    public void closeBluetooth() {
-        try {
-            this.soc.close();
-
-        } catch (IOException e) {
-            Log.e("My App", "Socket creation failed", e);
-        }
-
-
-    }
 
 
 }
