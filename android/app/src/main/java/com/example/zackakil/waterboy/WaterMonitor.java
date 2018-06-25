@@ -1,11 +1,14 @@
 package com.example.zackakil.waterboy;
 
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -29,9 +32,10 @@ public class WaterMonitor extends TimerTask {
     private BluetoothConnector bt;
     private NotificationManagerCompat nm;
     private NotificationCompat.Builder nb;
+    private Activity a;
 
-    public WaterMonitor(NotificationManagerCompat nm, NotificationCompat.Builder nb) {
-
+    public WaterMonitor(NotificationManagerCompat nm, NotificationCompat.Builder nb, Activity a) {
+        this.a = a;
         this.nm = nm;
         this.nb = nb;
         bt = new BluetoothConnector("HC-06");
@@ -52,6 +56,8 @@ public class WaterMonitor extends TimerTask {
 
         int level = bt.readInt();
 
+        writeLevel(level);
+
         if(level < 150){
             Log.e("My App", "try to send notification");
             nb.setContentText("Water is low!");
@@ -65,6 +71,14 @@ public class WaterMonitor extends TimerTask {
     private void sendNotification(){
 
 
+    }
+
+    private void writeLevel(int level){
+
+        SharedPreferences sharedPref = a.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("level", level);
+        editor.commit();
     }
 
     @Override

@@ -7,7 +7,9 @@ import android.app.Service;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.notify(42, mBuilder.build());
 
 
-            WaterMonitor wm = new WaterMonitor(notificationManager, mBuilder);
+            WaterMonitor wm = new WaterMonitor(notificationManager, mBuilder, this);
             scheduledFuture = scheduler.scheduleAtFixedRate(wm, 0, 5, TimeUnit.SECONDS);
 
 
@@ -115,7 +117,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
+    private int readLevel(){
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int level = sharedPref.getInt("level", 5);
+        return level;
+    }
 
     public void btnPress(View v){
 //        notificationThresh++;
@@ -125,24 +131,38 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnPress2(View v){
 //        Log.e("My App", "btn press");
-        bt.ping();
+//        bt.ping();
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                int level = bt.readInt();
+//                Log.e("My App", "Hello again " + String.valueOf(level));
+//
+//                if(level < 60){
+//                    bottleImageView.setImageResource(R.drawable.low);
+//                }else if (level < 160){
+//                    bottleImageView.setImageResource(R.drawable.mid);
+//                }else{
+//                    bottleImageView.setImageResource(R.drawable.high);
+//                }
+//
+//            }
+//        }, 100);
+//
+//
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                int level = bt.readInt();
-                Log.e("My App", "Hello again " + String.valueOf(level));
 
-                if(level < 60){
-                    bottleImageView.setImageResource(R.drawable.low);
-                }else if (level < 160){
-                    bottleImageView.setImageResource(R.drawable.mid);
-                }else{
-                    bottleImageView.setImageResource(R.drawable.high);
-                }
+        int level = readLevel();
+        Log.e("My App", "Hello again " + String.valueOf(level));
 
-            }
-        }, 100);
+        if(level < 60){
+            bottleImageView.setImageResource(R.drawable.low);
+        }else if (level < 160){
+            bottleImageView.setImageResource(R.drawable.mid);
+        }else{
+            bottleImageView.setImageResource(R.drawable.high);
+        }
 
 
 
