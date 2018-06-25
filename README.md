@@ -17,3 +17,5 @@ bluetooth socket - https://developer.android.com/reference/android/bluetooth/Blu
 andoird services? - https://stackoverflow.com/questions/38813888/how-can-i-run-bluetooth-connection-in-the-background-in-android
 
 re: services, seems the prefered route for andoird Oreo+ are jobs - https://developer.android.com/guide/components/services
+
+storage - https://developer.android.com/training/data-storage/shared-preferences#java
